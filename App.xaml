@@ -1,9 +1,25 @@
 ﻿<Application x:Class="DukkanDepo.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:DukkanDepo"
-             StartupUri="MainWindow.xaml">
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:conv="clr-namespace:DukkanDepo.Presentation.Converters"
+             Startup="Application_Startup">
+
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+            </ResourceDictionary.MergedDictionaries>
+
+            <sys:Double x:Key="AppFontSize">13</sys:Double>
+
+            <conv:DecimalFlexibleConverter x:Key="DecimalFlexibleConverter" />
+            <conv:SelectedItemSafeConverter x:Key="SelectedItemSafeConverter" />
+            <conv:KarZararToBrushConverter x:Key="KarZararToBrush" />
+            <conv:FontSizeToLineHeightConverter x:Key="FontToLineHeight" Factor="1.35" />
+            <conv:FontSizeToMaxHeightConverter x:Key="FontToMaxHeight" Factor="1.35" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

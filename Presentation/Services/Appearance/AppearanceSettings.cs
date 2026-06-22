@@ -5,7 +5,7 @@ public sealed class AppearanceSettings
     /// <summary>
     /// System | Light | Dark
     /// </summary>
-    public string Theme { get; set; } = "System";
+    public string Theme { get; set; } = "Light";
 
     /// <summary>
     /// Örn: "#0078D4"

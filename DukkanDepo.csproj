@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Presentation\Services\NewFolder\**" />
+    <EmbeddedResource Remove="Presentation\Services\NewFolder\**" />
+    <None Remove="Presentation\Services\NewFolder\**" />
+    <Page Remove="Presentation\Services\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.5" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.*" />
@@ -31,7 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Presentation\Services\NewFolder\" />
+    <Page Update="Presentation\Views\MainWindow.xaml">
+      <Generator></Generator>
+    </Page>
   </ItemGroup>
 
 </Project>
