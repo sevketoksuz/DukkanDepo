@@ -19,7 +19,8 @@ public sealed class TemporaryLauncherNavigationService : ILauncherNavigationServ
 
     public void OpenKislik()
     {
-        _messageService.Info("Kışlık ürün ekranı sonraki aşamada eklenecek.");
+        var window = new KislikWindow();
+        window.Show();
     }
 
     public void OpenAppearance()

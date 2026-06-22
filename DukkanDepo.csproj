@@ -38,6 +38,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Presentation\Views\KislikWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Update="Presentation\Views\AppearanceWindow.xaml">
       <Generator></Generator>
     </Page>
@@ -48,6 +54,9 @@
       <Generator></Generator>
     </Page>
     <Page Update="Presentation\Views\SummaryWindow.xaml">
+      <Generator></Generator>
+    </Page>
+    <Page Update="Presentation\Views\KislikWindow.xaml">
       <Generator></Generator>
     </Page>
     <Page Update="Presentation\Views\YazlikWindow.xaml">
