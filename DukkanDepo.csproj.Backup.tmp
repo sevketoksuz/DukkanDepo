@@ -20,13 +20,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
     <PackageReference Include="QuestPDF" Version="2026.6.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Presentation\Services\NewFolder\" />
+    <Folder Include="Presentation\Services\Appearance\" />
   </ItemGroup>
 
 </Project>
