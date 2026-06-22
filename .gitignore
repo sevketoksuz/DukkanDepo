@@ -1,15 +1,71 @@
-.vs/
+# Build outputs
 bin/
 obj/
-database/
-backups/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+ARM/
+ARM64/
+
+# Visual Studio
+.vs/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Logs
+*.log
+logs/
+
+# Local databases
 *.db
 *.db-wal
 *.db-shm
 *.sqlite
 *.sqlite3
-*.zip
+database/
+databases/
+
+# Backups / exports
+backups/
+backup/
 *.bak
-*.csproj.user
-*.suo
-*.user
+*.zip
+*.7z
+*.rar
+
+# App local data
+App_Data/
+LocalAppData/
+UserData/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test results / coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Publish
+publish/
