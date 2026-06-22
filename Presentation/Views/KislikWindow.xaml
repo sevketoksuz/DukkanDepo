@@ -126,23 +126,22 @@
         </ScrollViewer>
 
         <DataGrid x:Name="UrunDataGrid"
-                  Grid.Row="2"
-                  Language="tr-TR"
-                  ItemsSource="{Binding UrunlerView}"
-                  SelectedItem="{Binding SeciliUrun, Mode=TwoWay, Converter={StaticResource SelectedItemSafeConverter}}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="True"
-                  IsReadOnly="False"
-                  RowEditEnding="DataGrid_RowEditEnding"
-                  CellEditEnding="DataGrid_CellEditEnding"
-                  CurrentCellChanged="UrunDataGrid_CurrentCellChanged"
-                  CanUserSortColumns="True"
-                  Sorting="UrunDataGrid_Sorting"
-                  SelectionMode="Extended"
-                  SelectionUnit="FullRow"
-                  PreviewKeyDown="UrunDataGrid_PreviewKeyDown"
-                  PreviewMouseLeftButtonDown="UrunDataGrid_PreviewMouseLeftButtonDown"
-                  PreparingCellForEdit="UrunDataGrid_PreparingCellForEdit">
+          Grid.Row="2"
+          Language="tr-TR"
+          ItemsSource="{Binding UrunlerView}"
+          SelectedItem="{Binding SeciliUrun, Mode=TwoWay, Converter={StaticResource SelectedItemSafeConverter}}"
+          AutoGenerateColumns="False"
+          CanUserAddRows="True"
+          IsReadOnly="False"
+          RowEditEnding="DataGrid_RowEditEnding"
+          CellEditEnding="DataGrid_CellEditEnding"
+          CurrentCellChanged="UrunDataGrid_CurrentCellChanged"
+          CanUserSortColumns="True"
+          Sorting="UrunDataGrid_Sorting"
+          SelectionMode="Extended"
+          SelectionUnit="FullRow"
+          PreviewKeyDown="UrunDataGrid_PreviewKeyDown"
+          PreparingCellForEdit="UrunDataGrid_PreparingCellForEdit">
 
             <DataGrid.Columns>
 

@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using DukkanDepo.Domain.Entities;
 using DukkanDepo.Infrastructure.Persistence.Context;
@@ -29,6 +27,7 @@ public partial class YazlikWindow : Window
 
     private bool _rowEditLock;
     private bool _suppressKeyHandler;
+    private string? _editingOriginalText;
 
     public YazlikWindow()
     {
@@ -90,6 +89,9 @@ public partial class YazlikWindow : Window
         object sender,
         DataGridCellEditEndingEventArgs e)
     {
+        if (e.EditAction != DataGridEditAction.Commit)
+            return;
+
         if (e.EditingElement is TextBox textBox)
             textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
     }
@@ -100,6 +102,8 @@ public partial class YazlikWindow : Window
     {
         if (e.EditingElement is not TextBox textBox)
             return;
+
+        _editingOriginalText = textBox.Text;
 
         var initiatedByTyping = e.EditingEventArgs is TextCompositionEventArgs;
 
@@ -274,16 +278,16 @@ public partial class YazlikWindow : Window
         {
             var sortMemberPath = currentColumn!.SortMemberPath ?? string.Empty;
 
-            if (IsEditableNumericColumn(sortMemberPath))
+            if (DataGridTemplateEditHelper.IsNumericEditColumn(sortMemberPath))
             {
-                var inputText = GetNumericTextFromKey(e.Key);
+                var inputText = DataGridTemplateEditHelper.GetNumericTextFromKey(e.Key);
 
                 if (inputText is not null &&
-                    IsAllowedFirstInput(sortMemberPath, inputText))
+                    DataGridTemplateEditHelper.IsAllowedFirstInput(sortMemberPath, inputText))
                 {
                     e.Handled = true;
 
-                    await BeginTemplateCellEditAsync(
+                    await DataGridTemplateEditHelper.BeginEditAsync(
                         grid,
                         currentItem!,
                         currentColumn!,
@@ -297,7 +301,7 @@ public partial class YazlikWindow : Window
             {
                 e.Handled = true;
 
-                await BeginTemplateCellEditAsync(
+                await DataGridTemplateEditHelper.BeginEditAsync(
                     grid,
                     currentItem!,
                     currentColumn!,
@@ -313,32 +317,30 @@ public partial class YazlikWindow : Window
             {
                 e.Handled = true;
 
-                DataGridEditHelper
-                    .TryGetFocusedTextBox()
-                    ?.GetBindingExpression(TextBox.TextProperty)
-                    ?.UpdateTarget();
+                var textBox = DataGridEditHelper.TryGetFocusedTextBox();
+
+                if (textBox is not null && _editingOriginalText is not null)
+                {
+                    textBox.Text = _editingOriginalText;
+                    textBox.CaretIndex = textBox.Text.Length;
+                    textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+                }
 
                 await Dispatcher.InvokeAsync(() =>
                 {
                     try
                     {
                         _suppressKeyHandler = true;
+
                         grid.CommitEdit(DataGridEditingUnit.Cell, true);
                         grid.CommitEdit(DataGridEditingUnit.Row, true);
                     }
                     finally
                     {
                         _suppressKeyHandler = false;
+                        _editingOriginalText = null;
                     }
                 }, DispatcherPriority.Background);
-
-                if (!placeholderOrNull)
-                {
-                    DataGridEditHelper.SafeRestoreFocus(
-                        grid,
-                        currentItem!,
-                        currentColumn!);
-                }
             }
 
             return;
@@ -360,22 +362,16 @@ public partial class YazlikWindow : Window
                     try
                     {
                         _suppressKeyHandler = true;
+
                         grid.CommitEdit(DataGridEditingUnit.Cell, true);
                         grid.CommitEdit(DataGridEditingUnit.Row, true);
                     }
                     finally
                     {
                         _suppressKeyHandler = false;
+                        _editingOriginalText = null;
                     }
                 }, DispatcherPriority.Background);
-
-                if (!placeholderOrNull)
-                {
-                    DataGridEditHelper.SafeRestoreFocus(
-                        grid,
-                        currentItem!,
-                        currentColumn!);
-                }
             }
 
             return;
@@ -387,47 +383,6 @@ public partial class YazlikWindow : Window
             await DeleteSelectedAsync();
             e.Handled = true;
         }
-    }
-
-    private async void UrunDataGrid_PreviewMouseLeftButtonDown(
-        object sender,
-        MouseButtonEventArgs e)
-    {
-        if (sender is not DataGrid grid)
-            return;
-
-        if (DataGridEditHelper.IsEditingCell(grid))
-            return;
-
-        if (e.OriginalSource is not DependencyObject source)
-            return;
-
-        var cell = FindVisualParent<DataGridCell>(source);
-
-        if (cell is null)
-            return;
-
-        if (cell.IsEditing || cell.IsReadOnly)
-            return;
-
-        if (cell.DataContext is null ||
-            DataGridEditHelper.IsPlaceholder(cell.DataContext))
-        {
-            return;
-        }
-
-        var sortMemberPath = cell.Column.SortMemberPath ?? string.Empty;
-
-        if (!IsEditableNumericColumn(sortMemberPath))
-            return;
-
-        e.Handled = true;
-
-        await BeginTemplateCellEditAsync(
-            grid,
-            cell.DataContext,
-            cell.Column,
-            null);
     }
 
     private async Task DeleteSelectedAsync()
@@ -480,173 +435,5 @@ public partial class YazlikWindow : Window
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
-    }
-
-    private async Task BeginTemplateCellEditAsync(
-        DataGrid grid,
-        object item,
-        DataGridColumn column,
-        string? initialText)
-    {
-        grid.Focus();
-        grid.SelectedItem = item;
-        grid.CurrentCell = new DataGridCellInfo(item, column);
-        grid.ScrollIntoView(item, column);
-        grid.UpdateLayout();
-
-        var cell = GetCell(grid, item, column);
-
-        if (cell is not null)
-        {
-            cell.Focus();
-            cell.IsSelected = true;
-        }
-
-        grid.BeginEdit();
-
-        await Dispatcher.InvokeAsync(
-            () => { },
-            DispatcherPriority.ContextIdle);
-
-        var textBox = FindTextBoxInCurrentCell(grid, item, column);
-
-        if (textBox is null)
-            return;
-
-        textBox.Focus();
-
-        if (initialText is not null)
-        {
-            textBox.Text = initialText;
-            textBox.CaretIndex = textBox.Text.Length;
-            textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
-        }
-        else
-        {
-            textBox.SelectAll();
-        }
-    }
-
-    private static string? GetNumericTextFromKey(Key key)
-    {
-        if (key >= Key.D0 && key <= Key.D9)
-            return ((int)key - (int)Key.D0).ToString();
-
-        if (key >= Key.NumPad0 && key <= Key.NumPad9)
-            return ((int)key - (int)Key.NumPad0).ToString();
-
-        return key switch
-        {
-            Key.Decimal => ",",
-            Key.OemComma => ",",
-            Key.OemPeriod => ".",
-            _ => null
-        };
-    }
-
-    private static bool IsEditableNumericColumn(string sortMemberPath)
-    {
-        return sortMemberPath is "Adet" or "Satis" or "Iskonto";
-    }
-
-    private static bool IsAllowedFirstInput(
-        string sortMemberPath,
-        string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-            return false;
-
-        if (sortMemberPath == "Adet")
-            return text.All(char.IsDigit);
-
-        if (sortMemberPath is "Satis" or "Iskonto")
-            return text.All(char.IsDigit);
-
-        return false;
-    }
-
-    private static TextBox? FindTextBoxInCurrentCell(
-        DataGrid grid,
-        object item,
-        DataGridColumn column)
-    {
-        var cell = GetCell(grid, item, column);
-
-        if (cell is null)
-            return null;
-
-        return FindVisualChild<TextBox>(cell);
-    }
-
-    private static DataGridCell? GetCell(
-        DataGrid grid,
-        object item,
-        DataGridColumn column)
-    {
-        var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-
-        if (row is null)
-        {
-            grid.ScrollIntoView(item, column);
-            grid.UpdateLayout();
-
-            row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-        }
-
-        if (row is null)
-            return null;
-
-        var presenter = FindVisualChild<DataGridCellsPresenter>(row);
-
-        if (presenter is null)
-        {
-            grid.ScrollIntoView(item, column);
-            grid.UpdateLayout();
-
-            presenter = FindVisualChild<DataGridCellsPresenter>(row);
-        }
-
-        if (presenter is null)
-            return null;
-
-        return presenter
-            .ItemContainerGenerator
-            .ContainerFromIndex(column.DisplayIndex) as DataGridCell;
-    }
-
-    private static T? FindVisualChild<T>(DependencyObject? parent)
-        where T : DependencyObject
-    {
-        if (parent is null)
-            return null;
-
-        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-        {
-            var child = VisualTreeHelper.GetChild(parent, i);
-
-            if (child is T typedChild)
-                return typedChild;
-
-            var result = FindVisualChild<T>(child);
-
-            if (result is not null)
-                return result;
-        }
-
-        return null;
-    }
-
-    private static T? FindVisualParent<T>(DependencyObject? child)
-        where T : DependencyObject
-    {
-        while (child is not null)
-        {
-            if (child is T parent)
-                return parent;
-
-            child = VisualTreeHelper.GetParent(child);
-        }
-
-        return null;
     }
 }
