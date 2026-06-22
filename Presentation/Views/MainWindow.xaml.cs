@@ -11,7 +11,7 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         var messages = new WpfMessageService(this);
-        var navigation = new TemporaryLauncherNavigationService(messages);
+        var navigation = new LauncherNavigationService(this);
         var dialogs = new WpfFileDialogService(this);
         var appControl = new AppControlService();
 
