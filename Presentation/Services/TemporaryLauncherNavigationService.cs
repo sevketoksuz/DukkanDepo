@@ -13,7 +13,8 @@ public sealed class TemporaryLauncherNavigationService : ILauncherNavigationServ
 
     public void OpenYazlik()
     {
-        _messageService.Info("Yazlık ürün ekranı sonraki aşamada eklenecek.");
+        var window = new YazlikWindow();
+        window.Show();
     }
 
     public void OpenKislik()

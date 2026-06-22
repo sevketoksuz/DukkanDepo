@@ -38,7 +38,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Presentation\Views\AppearanceWindow.xaml">
+      <Generator></Generator>
+    </Page>
+    <Page Update="Presentation\Views\ChartsWindow.xaml">
+      <Generator></Generator>
+    </Page>
     <Page Update="Presentation\Views\MainWindow.xaml">
+      <Generator></Generator>
+    </Page>
+    <Page Update="Presentation\Views\SummaryWindow.xaml">
+      <Generator></Generator>
+    </Page>
+    <Page Update="Presentation\Views\YazlikWindow.xaml">
       <Generator></Generator>
     </Page>
   </ItemGroup>

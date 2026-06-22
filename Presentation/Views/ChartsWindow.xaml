@@ -1,0 +1,112 @@
+﻿<Window x:Class="DukkanDepo.Presentation.Views.ChartsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        Title="Grafik Raporları"
+        Height="720"
+        Width="1080"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <Style TargetType="Control">
+            <Setter Property="FontSize" Value="{DynamicResource AppFontSize}" />
+        </Style>
+
+        <Style x:Key="ChartCard" TargetType="Border">
+            <Setter Property="BorderBrush" Value="#DDD" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="Margin" Value="8" />
+            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Grafik Raporları"
+                   FontSize="22"
+                   FontWeight="Bold"
+                   Margin="8,0,0,16" />
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+
+            <StackPanel>
+
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Aylık Tutar"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"
+                                   Margin="0,0,0,8" />
+
+                        <lvc:CartesianChart Height="260"
+                                            Series="{Binding AylikTutarSeri}"
+                                            XAxes="{Binding AylikXAxes}"
+                                            YAxes="{Binding ParaYAxes}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Aylık İskontolu Tutar"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"
+                                   Margin="0,0,0,8" />
+
+                        <lvc:CartesianChart Height="260"
+                                            Series="{Binding AylikIskontoluTutarSeri}"
+                                            XAxes="{Binding AylikXAxes}"
+                                            YAxes="{Binding ParaYAxes}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Haftalık Tutar"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"
+                                   Margin="0,0,0,8" />
+
+                        <lvc:CartesianChart Height="260"
+                                            Series="{Binding HaftalikTutarSeri}"
+                                            XAxes="{Binding HaftalikXAxes}"
+                                            YAxes="{Binding ParaYAxes}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Haftalık İskontolu Tutar"
+                                   FontWeight="SemiBold"
+                                   FontSize="16"
+                                   Margin="0,0,0,8" />
+
+                        <lvc:CartesianChart Height="260"
+                                            Series="{Binding HaftalikIskontoluTutarSeri}"
+                                            XAxes="{Binding HaftalikXAxes}"
+                                            YAxes="{Binding ParaYAxes}" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,16,8,0">
+
+            <Button Content="Kapat"
+                    Width="110"
+                    Height="34"
+                    Click="CloseButton_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

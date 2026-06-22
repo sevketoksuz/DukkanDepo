@@ -1,0 +1,341 @@
+﻿<Window x:Class="DukkanDepo.Presentation.Views.YazlikWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:beh="clr-namespace:DukkanDepo.Presentation.Behaviours"
+        Title="Yazlık Ürünler"
+        Height="640"
+        Width="1220"
+        WindowStartupLocation="CenterOwner"
+        KeyDown="Window_KeyDown"
+        Closing="Window_Closing">
+
+    <Window.Resources>
+        <Style TargetType="Control">
+            <Setter Property="FontSize" Value="{DynamicResource AppFontSize}" />
+        </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="2" />
+        </Style>
+
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ToolBarTray Grid.Row="0">
+            <ToolBar>
+                <Button Content="Yenile"
+                        Command="{Binding YenileCommand}" />
+
+                <Button Content="Filtreleri Temizle"
+                        Command="{Binding TemizleFiltreCommand}" />
+
+                <Button Content="Sil"
+                        Click="Delete_Click" />
+
+                <Separator />
+
+                <Button Content="Excel'e Aktar"
+                        Click="ExportExcel_Click" />
+
+                <Button Content="Excel'den Al"
+                        Click="ImportExcel_Click" />
+
+                <Button Content="PDF'e Aktar"
+                        Click="ExportPdf_Click" />
+
+                <Separator />
+
+                <Button Content="Özet"
+                        Click="OpenSummary_Click" />
+
+                <Button Content="Grafikler"
+                        Click="OpenCharts_Click" />
+
+                <Separator />
+
+                <TextBlock Text="Sayfa Boyutu:"
+                           VerticalAlignment="Center"
+                           Margin="10,0,5,0" />
+
+                <ComboBox Width="80"
+                          ItemsSource="{Binding SayfaBoyutuSecenekleri}"
+                          SelectedItem="{Binding SayfaBoyutu, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </ToolBar>
+        </ToolBarTray>
+
+        <ScrollViewer Grid.Row="1"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Disabled">
+
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,8,0,10"
+                        VerticalAlignment="Center">
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Kod" />
+                    <TextBox Width="110"
+                             Text="{Binding FiltreKod, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Model" />
+                    <TextBox Width="130"
+                             Text="{Binding FiltreModel, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Cins" />
+                    <TextBox Width="110"
+                             Text="{Binding FiltreCins, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Adet" />
+                    <TextBox Width="70"
+                             beh:NumericText.IsEnabled="True"
+                             beh:NumericText.AllowDecimal="False"
+                             beh:NumericText.MaxDecimalPlaces="0"
+                             Text="{Binding FiltreAdet, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Satış Min" />
+                    <TextBox Width="90"
+                             beh:NumericText.IsEnabled="True"
+                             beh:NumericText.AllowDecimal="True"
+                             beh:NumericText.MaxDecimalPlaces="2"
+                             Text="{Binding FiltreSatisMin, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Satış Max" />
+                    <TextBox Width="90"
+                             beh:NumericText.IsEnabled="True"
+                             beh:NumericText.AllowDecimal="True"
+                             beh:NumericText.MaxDecimalPlaces="2"
+                             Text="{Binding FiltreSatisMax, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="İskonto Min" />
+                    <TextBox Width="90"
+                             beh:NumericText.IsEnabled="True"
+                             beh:NumericText.AllowDecimal="True"
+                             beh:NumericText.MaxDecimalPlaces="2"
+                             Text="{Binding FiltreIskontoMin, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="İskonto Max" />
+                    <TextBox Width="90"
+                             beh:NumericText.IsEnabled="True"
+                             beh:NumericText.AllowDecimal="True"
+                             beh:NumericText.MaxDecimalPlaces="2"
+                             Text="{Binding FiltreIskontoMax, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Tarih Başlangıç" />
+                    <DatePicker Width="130"
+                                SelectedDate="{Binding FiltreTarihBaslangic, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Tarih Bitiş" />
+                    <DatePicker Width="130"
+                                SelectedDate="{Binding FiltreTarihBitis, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <DataGrid x:Name="UrunDataGrid"
+                  Grid.Row="2"
+                  Language="tr-TR"
+                  ItemsSource="{Binding UrunlerView}"
+                  SelectedItem="{Binding SeciliUrun, Mode=TwoWay, Converter={StaticResource SelectedItemSafeConverter}}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  IsReadOnly="False"
+                  RowEditEnding="DataGrid_RowEditEnding"
+                  CellEditEnding="DataGrid_CellEditEnding"
+                  CurrentCellChanged="UrunDataGrid_CurrentCellChanged"
+                  CanUserSortColumns="True"
+                  Sorting="UrunDataGrid_Sorting"
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
+                  PreviewKeyDown="UrunDataGrid_PreviewKeyDown"
+                  PreparingCellForEdit="UrunDataGrid_PreparingCellForEdit">
+
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="Kod"
+                                    Binding="{Binding Kod, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                    SortMemberPath="Kod"
+                                    Width="100" />
+
+                <DataGridTextColumn Header="Cins"
+                                    Binding="{Binding Cins, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                    SortMemberPath="Cins"
+                                    Width="120" />
+
+                <DataGridTextColumn Header="Model"
+                                    Binding="{Binding Model, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                    SortMemberPath="Model"
+                                    Width="150" />
+
+                <DataGridTemplateColumn Header="Adet"
+                                        SortMemberPath="Adet"
+                                        Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Adet}"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                     TextAlignment="Center"
+                                     beh:NumericText.IsEnabled="True"
+                                     beh:NumericText.AllowDecimal="False"
+                                     beh:NumericText.MaxDecimalPlaces="0" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Satış"
+                                        SortMemberPath="Satis"
+                                        Width="110">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock TextAlignment="Center"
+                                       VerticalAlignment="Center">
+                                <Run Text="{Binding Satis, StringFormat={}{0:N2}}" />
+                                <Run Text=" $" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Satis, Mode=TwoWay, UpdateSourceTrigger=LostFocus, Converter={StaticResource DecimalFlexibleConverter}, ConverterCulture=tr-TR}"
+                                     TextAlignment="Center"
+                                     beh:NumericText.IsEnabled="True"
+                                     beh:NumericText.AllowDecimal="True"
+                                     beh:NumericText.MaxDecimalPlaces="2" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Tutar"
+                                        IsReadOnly="True"
+                                        SortMemberPath="Tutar"
+                                        Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock TextAlignment="Center"
+                                       VerticalAlignment="Center">
+                                <Run Text="{Binding Tutar, StringFormat={}{0:N2}}" />
+                                <Run Text=" $" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="İskonto"
+                                        SortMemberPath="Iskonto"
+                                        Width="110">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock TextAlignment="Center"
+                                       VerticalAlignment="Center">
+                                <Run Text="{Binding Iskonto, StringFormat={}{0:N2}}" />
+                                <Run Text=" $" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Iskonto, Mode=TwoWay, UpdateSourceTrigger=LostFocus, Converter={StaticResource DecimalFlexibleConverter}, ConverterCulture=tr-TR}"
+                                     TextAlignment="Center"
+                                     beh:NumericText.IsEnabled="True"
+                                     beh:NumericText.AllowDecimal="True"
+                                     beh:NumericText.MaxDecimalPlaces="2" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="İskontolu Tutar"
+                                        IsReadOnly="True"
+                                        SortMemberPath="IskontoluTutar"
+                                        Width="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock TextAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="{Binding IskontoluTutar, Converter={StaticResource KarZararToBrush}}">
+                                <Run Text="{Binding IskontoluTutar, StringFormat={}{0:N2}}" />
+                                <Run Text=" $" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Tarih"
+                                        SortMemberPath="Tarih"
+                                        Width="180">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Tarih, StringFormat=dd.MM.yyyy HH:mm}"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding Tarih, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <DockPanel Grid.Row="3"
+                   Margin="0,8,0,0">
+
+            <TextBlock Text="{Binding SayfaMetni}"
+                       DockPanel.Dock="Left"
+                       VerticalAlignment="Center"
+                       FontWeight="SemiBold"
+                       Margin="4,0,0,0" />
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Content="Önceki"
+                        Width="90"
+                        Command="{Binding OncekiCommand}" />
+
+                <Button Content="Sonraki"
+                        Width="90"
+                        Command="{Binding SonrakiCommand}" />
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>
