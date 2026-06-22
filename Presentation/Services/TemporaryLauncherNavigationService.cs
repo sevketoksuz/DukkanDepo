@@ -1,4 +1,6 @@
-﻿namespace DukkanDepo.Presentation.Services;
+﻿using DukkanDepo.Presentation.Views;
+
+namespace DukkanDepo.Presentation.Services;
 
 public sealed class TemporaryLauncherNavigationService : ILauncherNavigationService
 {
@@ -21,6 +23,7 @@ public sealed class TemporaryLauncherNavigationService : ILauncherNavigationServ
 
     public void OpenAppearance()
     {
-        _messageService.Info("Görünüm ekranı sonraki aşamada eklenecek.");
+        var window = new AppearanceWindow();
+        window.ShowDialog();
     }
 }

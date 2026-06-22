@@ -1,0 +1,128 @@
+﻿<Window x:Class="DukkanDepo.Presentation.Views.AppearanceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Görünüm Ayarları"
+        Height="420"
+        Width="520"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style TargetType="Control">
+            <Setter Property="FontSize" Value="{DynamicResource AppFontSize}" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Görünüm Ayarları"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="0,0,0,20" />
+
+        <StackPanel Grid.Row="1">
+
+            <TextBlock Text="Tema"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,6" />
+
+            <ComboBox SelectedValue="{Binding Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedValuePath="Content"
+                      Width="220"
+                      HorizontalAlignment="Left"
+                      Margin="0,0,0,16">
+                <ComboBoxItem Content="System" />
+                <ComboBoxItem Content="Light" />
+                <ComboBoxItem Content="Dark" />
+            </ComboBox>
+
+            <TextBlock Text="Accent Rengi"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,6" />
+
+            <DockPanel Margin="0,0,0,8">
+                <Border Width="34"
+                        Height="34"
+                        BorderBrush="#999"
+                        BorderThickness="1"
+                        Background="{Binding AccentPreviewBrush}"
+                        DockPanel.Dock="Left"
+                        Margin="0,0,8,0" />
+
+                <TextBox Text="{Binding AccentHex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Width="160"
+                         VerticalContentAlignment="Center"
+                         ToolTip="Örnek: #0078D4" />
+            </DockPanel>
+
+            <WrapPanel Margin="0,0,0,16">
+                <Button Content="#0078D4"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Command="{Binding PickAccentCommand}"
+                        CommandParameter="#0078D4" />
+
+                <Button Content="#E81123"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Command="{Binding PickAccentCommand}"
+                        CommandParameter="#E81123" />
+
+                <Button Content="#107C10"
+                        Width="80"
+                        Margin="0,0,8,0"
+                        Command="{Binding PickAccentCommand}"
+                        CommandParameter="#107C10" />
+
+                <Button Content="#5C2D91"
+                        Width="80"
+                        Command="{Binding PickAccentCommand}"
+                        CommandParameter="#5C2D91" />
+            </WrapPanel>
+
+            <TextBlock Text="Yazı Boyutu"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,6" />
+
+            <DockPanel>
+                <Slider Minimum="10"
+                        Maximum="20"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        Value="{Binding FontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Width="240"
+                        DockPanel.Dock="Left"
+                        Margin="0,0,12,0" />
+
+                <TextBlock Text="{Binding FontSize, StringFormat={}{0:0}}"
+                           VerticalAlignment="Center" />
+            </DockPanel>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,20,0,0">
+
+            <Button Content="Varsayılan"
+                    Width="100"
+                    Margin="0,0,8,0"
+                    Command="{Binding DefaultsCommand}" />
+
+            <Button Content="Kaydet"
+                    Width="100"
+                    Margin="0,0,8,0"
+                    Command="{Binding SaveCommand}" />
+
+            <Button Content="Kapat"
+                    Width="100"
+                    Command="{Binding CloseCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>
