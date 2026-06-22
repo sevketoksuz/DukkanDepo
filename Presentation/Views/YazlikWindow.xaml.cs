@@ -1,4 +1,11 @@
-﻿using DukkanDepo.Domain.Entities;
+﻿using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
+using DukkanDepo.Domain.Entities;
 using DukkanDepo.Infrastructure.Persistence.Context;
 using DukkanDepo.Infrastructure.Persistence.Repositories;
 using DukkanDepo.Infrastructure.Reporting.Charts;
@@ -7,12 +14,6 @@ using DukkanDepo.Presentation.Helpers;
 using DukkanDepo.Presentation.Services;
 using DukkanDepo.Presentation.Services.Exports;
 using DukkanDepo.Presentation.ViewModels.Main;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace DukkanDepo.Presentation.Views;
 
@@ -224,7 +225,7 @@ public partial class YazlikWindow : Window
     private void Window_KeyDown(object sender, KeyEventArgs e)
     {
         var ctrl = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-        var typing = Keyboard.FocusedElement is TextBox or TextBoxBase;
+        var typing = Keyboard.FocusedElement is TextBox;
 
         if (e.Key == Key.F5)
         {
@@ -269,6 +270,43 @@ public partial class YazlikWindow : Window
             currentItem is null ||
             DataGridEditHelper.IsPlaceholder(currentItem);
 
+        if (!DataGridEditHelper.IsEditingCell(grid) && !placeholderOrNull)
+        {
+            var sortMemberPath = currentColumn!.SortMemberPath ?? string.Empty;
+
+            if (IsEditableNumericColumn(sortMemberPath))
+            {
+                var inputText = GetNumericTextFromKey(e.Key);
+
+                if (inputText is not null &&
+                    IsAllowedFirstInput(sortMemberPath, inputText))
+                {
+                    e.Handled = true;
+
+                    await BeginTemplateCellEditAsync(
+                        grid,
+                        currentItem!,
+                        currentColumn!,
+                        inputText);
+
+                    return;
+                }
+            }
+
+            if (e.Key == Key.F2)
+            {
+                e.Handled = true;
+
+                await BeginTemplateCellEditAsync(
+                    grid,
+                    currentItem!,
+                    currentColumn!,
+                    null);
+
+                return;
+            }
+        }
+
         if (e.Key == Key.Escape)
         {
             if (DataGridEditHelper.IsEditingCell(grid))
@@ -292,13 +330,15 @@ public partial class YazlikWindow : Window
                     {
                         _suppressKeyHandler = false;
                     }
-                }, System.Windows.Threading.DispatcherPriority.Background);
+                }, DispatcherPriority.Background);
 
                 if (!placeholderOrNull)
+                {
                     DataGridEditHelper.SafeRestoreFocus(
                         grid,
                         currentItem!,
                         currentColumn!);
+                }
             }
 
             return;
@@ -327,13 +367,15 @@ public partial class YazlikWindow : Window
                     {
                         _suppressKeyHandler = false;
                     }
-                }, System.Windows.Threading.DispatcherPriority.Background);
+                }, DispatcherPriority.Background);
 
                 if (!placeholderOrNull)
+                {
                     DataGridEditHelper.SafeRestoreFocus(
                         grid,
                         currentItem!,
                         currentColumn!);
+                }
             }
 
             return;
@@ -345,6 +387,47 @@ public partial class YazlikWindow : Window
             await DeleteSelectedAsync();
             e.Handled = true;
         }
+    }
+
+    private async void UrunDataGrid_PreviewMouseLeftButtonDown(
+        object sender,
+        MouseButtonEventArgs e)
+    {
+        if (sender is not DataGrid grid)
+            return;
+
+        if (DataGridEditHelper.IsEditingCell(grid))
+            return;
+
+        if (e.OriginalSource is not DependencyObject source)
+            return;
+
+        var cell = FindVisualParent<DataGridCell>(source);
+
+        if (cell is null)
+            return;
+
+        if (cell.IsEditing || cell.IsReadOnly)
+            return;
+
+        if (cell.DataContext is null ||
+            DataGridEditHelper.IsPlaceholder(cell.DataContext))
+        {
+            return;
+        }
+
+        var sortMemberPath = cell.Column.SortMemberPath ?? string.Empty;
+
+        if (!IsEditableNumericColumn(sortMemberPath))
+            return;
+
+        e.Handled = true;
+
+        await BeginTemplateCellEditAsync(
+            grid,
+            cell.DataContext,
+            cell.Column,
+            null);
     }
 
     private async Task DeleteSelectedAsync()
@@ -397,5 +480,173 @@ public partial class YazlikWindow : Window
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
+    }
+
+    private async Task BeginTemplateCellEditAsync(
+        DataGrid grid,
+        object item,
+        DataGridColumn column,
+        string? initialText)
+    {
+        grid.Focus();
+        grid.SelectedItem = item;
+        grid.CurrentCell = new DataGridCellInfo(item, column);
+        grid.ScrollIntoView(item, column);
+        grid.UpdateLayout();
+
+        var cell = GetCell(grid, item, column);
+
+        if (cell is not null)
+        {
+            cell.Focus();
+            cell.IsSelected = true;
+        }
+
+        grid.BeginEdit();
+
+        await Dispatcher.InvokeAsync(
+            () => { },
+            DispatcherPriority.ContextIdle);
+
+        var textBox = FindTextBoxInCurrentCell(grid, item, column);
+
+        if (textBox is null)
+            return;
+
+        textBox.Focus();
+
+        if (initialText is not null)
+        {
+            textBox.Text = initialText;
+            textBox.CaretIndex = textBox.Text.Length;
+            textBox.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+        }
+        else
+        {
+            textBox.SelectAll();
+        }
+    }
+
+    private static string? GetNumericTextFromKey(Key key)
+    {
+        if (key >= Key.D0 && key <= Key.D9)
+            return ((int)key - (int)Key.D0).ToString();
+
+        if (key >= Key.NumPad0 && key <= Key.NumPad9)
+            return ((int)key - (int)Key.NumPad0).ToString();
+
+        return key switch
+        {
+            Key.Decimal => ",",
+            Key.OemComma => ",",
+            Key.OemPeriod => ".",
+            _ => null
+        };
+    }
+
+    private static bool IsEditableNumericColumn(string sortMemberPath)
+    {
+        return sortMemberPath is "Adet" or "Satis" or "Iskonto";
+    }
+
+    private static bool IsAllowedFirstInput(
+        string sortMemberPath,
+        string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return false;
+
+        if (sortMemberPath == "Adet")
+            return text.All(char.IsDigit);
+
+        if (sortMemberPath is "Satis" or "Iskonto")
+            return text.All(char.IsDigit);
+
+        return false;
+    }
+
+    private static TextBox? FindTextBoxInCurrentCell(
+        DataGrid grid,
+        object item,
+        DataGridColumn column)
+    {
+        var cell = GetCell(grid, item, column);
+
+        if (cell is null)
+            return null;
+
+        return FindVisualChild<TextBox>(cell);
+    }
+
+    private static DataGridCell? GetCell(
+        DataGrid grid,
+        object item,
+        DataGridColumn column)
+    {
+        var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+
+        if (row is null)
+        {
+            grid.ScrollIntoView(item, column);
+            grid.UpdateLayout();
+
+            row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+        }
+
+        if (row is null)
+            return null;
+
+        var presenter = FindVisualChild<DataGridCellsPresenter>(row);
+
+        if (presenter is null)
+        {
+            grid.ScrollIntoView(item, column);
+            grid.UpdateLayout();
+
+            presenter = FindVisualChild<DataGridCellsPresenter>(row);
+        }
+
+        if (presenter is null)
+            return null;
+
+        return presenter
+            .ItemContainerGenerator
+            .ContainerFromIndex(column.DisplayIndex) as DataGridCell;
+    }
+
+    private static T? FindVisualChild<T>(DependencyObject? parent)
+        where T : DependencyObject
+    {
+        if (parent is null)
+            return null;
+
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            if (child is T typedChild)
+                return typedChild;
+
+            var result = FindVisualChild<T>(child);
+
+            if (result is not null)
+                return result;
+        }
+
+        return null;
+    }
+
+    private static T? FindVisualParent<T>(DependencyObject? child)
+        where T : DependencyObject
+    {
+        while (child is not null)
+        {
+            if (child is T parent)
+                return parent;
+
+            child = VisualTreeHelper.GetParent(child);
+        }
+
+        return null;
     }
 }

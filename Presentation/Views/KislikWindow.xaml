@@ -79,85 +79,50 @@
                       VerticalScrollBarVisibility="Disabled">
 
             <StackPanel Orientation="Horizontal"
-                        Margin="0,8,0,10"
-                        VerticalAlignment="Center">
+            Margin="0,8,0,10"
+            VerticalAlignment="Center">
 
                 <StackPanel Margin="0,0,10,0">
                     <TextBlock Text="Kod" />
                     <TextBox Width="110"
-                             Text="{Binding FiltreKod, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-
-                <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="Model" />
-                    <TextBox Width="130"
-                             Text="{Binding FiltreModel, UpdateSourceTrigger=PropertyChanged}" />
+                 Text="{Binding FiltreKod, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
                 <StackPanel Margin="0,0,10,0">
                     <TextBlock Text="Cins" />
                     <TextBox Width="110"
-                             Text="{Binding FiltreCins, UpdateSourceTrigger=PropertyChanged}" />
+                 Text="{Binding FiltreCins, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Model" />
+                    <TextBox Width="130"
+                 Text="{Binding FiltreModel, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
                 <StackPanel Margin="0,0,10,0">
                     <TextBlock Text="Adet" />
                     <TextBox Width="70"
-                             beh:NumericText.IsEnabled="True"
-                             beh:NumericText.AllowDecimal="False"
-                             beh:NumericText.MaxDecimalPlaces="0"
-                             Text="{Binding FiltreAdet, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-
-                <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="Satış Min" />
-                    <TextBox Width="90"
-                             beh:NumericText.IsEnabled="True"
-                             beh:NumericText.AllowDecimal="True"
-                             beh:NumericText.MaxDecimalPlaces="2"
-                             Text="{Binding FiltreSatisMin, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-
-                <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="Satış Max" />
-                    <TextBox Width="90"
-                             beh:NumericText.IsEnabled="True"
-                             beh:NumericText.AllowDecimal="True"
-                             beh:NumericText.MaxDecimalPlaces="2"
-                             Text="{Binding FiltreSatisMax, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-
-                <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="İskonto Min" />
-                    <TextBox Width="90"
-                             beh:NumericText.IsEnabled="True"
-                             beh:NumericText.AllowDecimal="True"
-                             beh:NumericText.MaxDecimalPlaces="2"
-                             Text="{Binding FiltreIskontoMin, UpdateSourceTrigger=PropertyChanged}" />
-                </StackPanel>
-
-                <StackPanel Margin="0,0,10,0">
-                    <TextBlock Text="İskonto Max" />
-                    <TextBox Width="90"
-                             beh:NumericText.IsEnabled="True"
-                             beh:NumericText.AllowDecimal="True"
-                             beh:NumericText.MaxDecimalPlaces="2"
-                             Text="{Binding FiltreIskontoMax, UpdateSourceTrigger=PropertyChanged}" />
+                 beh:NumericText.IsEnabled="True"
+                 beh:NumericText.AllowDecimal="False"
+                 beh:NumericText.MaxDecimalPlaces="0"
+                 Text="{Binding FiltreAdet, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
                 <StackPanel Margin="0,0,10,0">
                     <TextBlock Text="Tarih Başlangıç" />
                     <DatePicker Width="130"
-                                SelectedDate="{Binding FiltreTarihBaslangic, UpdateSourceTrigger=PropertyChanged}" />
+                    SelectedDate="{Binding FiltreTarihBaslangic, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
                 <StackPanel Margin="0,0,10,0">
                     <TextBlock Text="Tarih Bitiş" />
                     <DatePicker Width="130"
-                                SelectedDate="{Binding FiltreTarihBitis, UpdateSourceTrigger=PropertyChanged}" />
+                    SelectedDate="{Binding FiltreTarihBitis, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
             </StackPanel>
+
         </ScrollViewer>
 
         <DataGrid x:Name="UrunDataGrid"
@@ -176,6 +141,7 @@
                   SelectionMode="Extended"
                   SelectionUnit="FullRow"
                   PreviewKeyDown="UrunDataGrid_PreviewKeyDown"
+                  PreviewMouseLeftButtonDown="UrunDataGrid_PreviewMouseLeftButtonDown"
                   PreparingCellForEdit="UrunDataGrid_PreparingCellForEdit">
 
             <DataGrid.Columns>

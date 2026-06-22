@@ -1,21 +1,100 @@
-﻿namespace DukkanDepo.Domain.Entities;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-public abstract class Urun
+namespace DukkanDepo.Domain.Entities;
+
+public abstract class Urun : INotifyPropertyChanged
 {
-    public int Id { get; set; }
+    private int _id;
+    private string? _kod;
+    private string? _model;
+    private string? _cins;
+    private decimal? _iskonto;
+    private int? _adet;
+    private decimal? _satis;
+    private decimal? _tutar;
+    private decimal? _iskontoluTutar;
+    private DateTime _tarih = DateTime.Now;
 
-    public string? Kod { get; set; }
-    public string? Model { get; set; }
-    public string? Cins { get; set; }
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    public decimal? Iskonto { get; set; }
-    public int? Adet { get; set; }
-    public decimal? Satis { get; set; }
+    public int Id
+    {
+        get => _id;
+        set => SetField(ref _id, value);
+    }
 
-    public decimal? Tutar { get; set; }
-    public decimal? IskontoluTutar { get; set; }
+    public string? Kod
+    {
+        get => _kod;
+        set => SetField(ref _kod, value);
+    }
 
-    public DateTime Tarih { get; set; } = DateTime.Now;
+    public string? Model
+    {
+        get => _model;
+        set => SetField(ref _model, value);
+    }
+
+    public string? Cins
+    {
+        get => _cins;
+        set => SetField(ref _cins, value);
+    }
+
+    public decimal? Iskonto
+    {
+        get => _iskonto;
+        set
+        {
+            if (!SetField(ref _iskonto, value))
+                return;
+
+            Recalculate();
+        }
+    }
+
+    public int? Adet
+    {
+        get => _adet;
+        set
+        {
+            if (!SetField(ref _adet, value))
+                return;
+
+            Recalculate();
+        }
+    }
+
+    public decimal? Satis
+    {
+        get => _satis;
+        set
+        {
+            if (!SetField(ref _satis, value))
+                return;
+
+            Recalculate();
+        }
+    }
+
+    public decimal? Tutar
+    {
+        get => _tutar;
+        set => SetField(ref _tutar, value);
+    }
+
+    public decimal? IskontoluTutar
+    {
+        get => _iskontoluTutar;
+        set => SetField(ref _iskontoluTutar, value);
+    }
+
+    public DateTime Tarih
+    {
+        get => _tarih;
+        set => SetField(ref _tarih, value);
+    }
 
     public void Recalculate()
     {
@@ -25,5 +104,25 @@ public abstract class Urun
 
         Tutar = satis * adet;
         IskontoluTutar = (satis - iskonto) * adet;
+    }
+
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(
+            this,
+            new PropertyChangedEventArgs(propertyName));
+    }
+
+    private bool SetField<T>(
+        ref T field,
+        T value,
+        [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+            return false;
+
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
     }
 }
