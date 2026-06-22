@@ -1,0 +1,69 @@
+﻿using DukkanDepo.Domain.Entities;
+using DukkanDepo.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
+
+namespace DukkanDepo.Presentation.ViewModels.Main;
+
+public sealed class YazlikWindowViewModel : MainViewModel<YazlikUrun>
+{
+    private readonly UrunRepository<YazlikUrun> _repository;
+
+    public YazlikWindowViewModel(UrunRepository<YazlikUrun> repository)
+        : base(repository)
+    {
+        _repository = repository;
+    }
+
+    public IQueryable<Urun> UrunQuery()
+    {
+        return _repository
+            .Query()
+            .Cast<Urun>();
+    }
+
+    public List<Urun> GetAllUrunNoTracking()
+    {
+        return _repository
+            .Query()
+            .AsNoTracking()
+            .Cast<Urun>()
+            .ToList();
+    }
+
+    public Task DeleteManyByIdsAsync(
+        IEnumerable<int> ids,
+        CancellationToken cancellationToken = default)
+    {
+        return _repository.DeleteManyByIdsAsync(
+            ids,
+            cancellationToken);
+    }
+
+    public void SaveRow(YazlikUrun? product)
+    {
+        if (product is null)
+            return;
+
+        product.Recalculate();
+
+        if (product.Id == 0)
+        {
+            _repository
+                .AddAsync(product)
+                .GetAwaiter()
+                .GetResult();
+        }
+        else
+        {
+            _repository
+                .UpdateAsync(product)
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        _repository
+            .SaveChangesAsync()
+            .GetAwaiter()
+            .GetResult();
+    }
+}
