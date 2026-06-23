@@ -278,6 +278,25 @@ public class MainViewModel<TProduct> : ObservableObject
 
     public string SayfaMetni => $"{_sayfa} / {Math.Max(_toplamSayfa, 1)}";
 
+    protected void EnsureDraftRow()
+    {
+        if (Urunler.Any(product => product.Id == 0))
+            return;
+
+        Urunler.Add(new TProduct
+        {
+            Tarih = DateTime.Now
+        });
+    }
+
+    protected static bool CanPersistProduct(TProduct? product)
+    {
+        if (product is null)
+            return false;
+
+        return !string.IsNullOrWhiteSpace(product.Kod);
+    }
+
     public ICommand YenileCommand { get; }
 
     public ICommand TemizleFiltreCommand { get; }
@@ -321,6 +340,8 @@ public class MainViewModel<TProduct> : ObservableObject
 
         foreach (var product in pageItems)
             Urunler.Add(product);
+
+        EnsureDraftRow();
 
         OnPropertyChanged(nameof(SayfaMetni));
         UrunlerView.Refresh();

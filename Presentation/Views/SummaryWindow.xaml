@@ -4,7 +4,9 @@
         Title="Özet Rapor"
         Height="480"
         Width="760"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Window.Resources>
         <Style TargetType="Control">
@@ -12,7 +14,7 @@
         </Style>
 
         <Style x:Key="SummaryCard" TargetType="Border">
-            <Setter Property="BorderBrush" Value="#DDD" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Padding" Value="14" />
@@ -21,11 +23,13 @@
         </Style>
 
         <Style x:Key="SummaryTitle" TargetType="TextBlock">
-            <Setter Property="Opacity" Value="0.7" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="Opacity" Value="0.85" />
             <Setter Property="Margin" Value="0,0,0,8" />
         </Style>
 
         <Style x:Key="SummaryValue" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
             <Setter Property="FontSize" Value="22" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="TextWrapping" Value="Wrap" />

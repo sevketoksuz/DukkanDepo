@@ -5,7 +5,9 @@
         Title="Grafik Raporları"
         Height="720"
         Width="1080"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Window.Resources>
         <Style TargetType="Control">
@@ -13,12 +15,18 @@
         </Style>
 
         <Style x:Key="ChartCard" TargetType="Border">
-            <Setter Property="BorderBrush" Value="#DDD" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Padding" Value="12" />
             <Setter Property="Margin" Value="8" />
             <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+        </Style>
+        <Style x:Key="ChartTitle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,8" />
         </Style>
     </Window.Resources>
 
@@ -30,9 +38,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Text="Grafik Raporları"
-                   FontSize="22"
-                   FontWeight="Bold"
-                   Margin="8,0,0,16" />
+                    Style="{StaticResource ChartTitle}" />
 
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
@@ -42,9 +48,7 @@
                 <Border Style="{StaticResource ChartCard}">
                     <StackPanel>
                         <TextBlock Text="Aylık Tutar"
-                                   FontWeight="SemiBold"
-                                   FontSize="16"
-                                   Margin="0,0,0,8" />
+                                   Style="{StaticResource ChartTitle}" />
 
                         <lvc:CartesianChart Height="260"
                                             Series="{Binding AylikTutarSeri}"
@@ -56,9 +60,7 @@
                 <Border Style="{StaticResource ChartCard}">
                     <StackPanel>
                         <TextBlock Text="Aylık İskontolu Tutar"
-                                   FontWeight="SemiBold"
-                                   FontSize="16"
-                                   Margin="0,0,0,8" />
+                                   Style="{StaticResource ChartTitle}" />
 
                         <lvc:CartesianChart Height="260"
                                             Series="{Binding AylikIskontoluTutarSeri}"
@@ -70,9 +72,7 @@
                 <Border Style="{StaticResource ChartCard}">
                     <StackPanel>
                         <TextBlock Text="Haftalık Tutar"
-                                   FontWeight="SemiBold"
-                                   FontSize="16"
-                                   Margin="0,0,0,8" />
+                                   Style="{StaticResource ChartTitle}" />
 
                         <lvc:CartesianChart Height="260"
                                             Series="{Binding HaftalikTutarSeri}"
@@ -84,9 +84,7 @@
                 <Border Style="{StaticResource ChartCard}">
                     <StackPanel>
                         <TextBlock Text="Haftalık İskontolu Tutar"
-                                   FontWeight="SemiBold"
-                                   FontSize="16"
-                                   Margin="0,0,0,8" />
+                                   Style="{StaticResource ChartTitle}" />
 
                         <lvc:CartesianChart Height="260"
                                             Series="{Binding HaftalikIskontoluTutarSeri}"

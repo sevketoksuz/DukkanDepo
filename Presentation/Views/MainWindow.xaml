@@ -4,7 +4,9 @@
         Title="Dükkan Depo - Başlangıç"
         Height="380"
         Width="560"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Window.Resources>
         <Style TargetType="Control">

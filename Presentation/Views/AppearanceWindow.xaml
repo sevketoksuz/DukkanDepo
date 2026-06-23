@@ -5,7 +5,9 @@
         Height="420"
         Width="520"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Window.Resources>
         <Style TargetType="Control">
@@ -48,7 +50,7 @@
             <DockPanel Margin="0,0,0,8">
                 <Border Width="34"
                         Height="34"
-                        BorderBrush="#999"
+                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         Background="{Binding AccentPreviewBrush}"
                         DockPanel.Dock="Left"

@@ -169,6 +169,7 @@ public partial class YazlikWindow : Window
             .UrunlerView
             .Cast<object>()
             .OfType<YazlikUrun>()
+            .Where(product => product.Id > 0)
             .ToList();
 
         UrunExcelExportService.Export(

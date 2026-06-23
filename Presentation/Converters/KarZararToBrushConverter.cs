@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -13,23 +14,23 @@ public sealed class KarZararToBrushConverter : IValueConverter
         CultureInfo culture)
     {
         if (value is null)
-            return Brushes.Gray;
+            return GetBrush("TextFillColorSecondaryBrush", Brushes.Gray);
 
         try
         {
             var decimalValue = System.Convert.ToDecimal(value, culture);
 
             if (decimalValue > 0)
-                return Brushes.SeaGreen;
+                return GetBrush("SystemFillColorSuccessBrush", Brushes.SeaGreen);
 
             if (decimalValue < 0)
-                return Brushes.IndianRed;
+                return GetBrush("SystemFillColorCriticalBrush", Brushes.IndianRed);
 
-            return Brushes.Gray;
+            return GetBrush("TextFillColorSecondaryBrush", Brushes.Gray);
         }
         catch
         {
-            return Brushes.Gray;
+            return GetBrush("TextFillColorSecondaryBrush", Brushes.Gray);
         }
     }
 
@@ -40,5 +41,20 @@ public sealed class KarZararToBrushConverter : IValueConverter
         CultureInfo culture)
     {
         throw new NotSupportedException();
+    }
+
+    private static Brush GetBrush(string resourceKey, Brush fallback)
+    {
+        try
+        {
+            if (System.Windows.Application.Current?.TryFindResource(resourceKey) is Brush brush)
+                return brush;
+        }
+        catch
+        {
+            // Theme resource geçici olarak çözülemezse uygulamayı düşürme.
+        }
+
+        return fallback;
     }
 }

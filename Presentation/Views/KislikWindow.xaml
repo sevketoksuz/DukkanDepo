@@ -7,7 +7,9 @@
         Width="1220"
         WindowStartupLocation="CenterOwner"
         KeyDown="Window_KeyDown"
-        Closing="Window_Closing">
+        Closing="Window_Closing"
+        Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Window.Resources>
         <Style TargetType="Control">
@@ -131,7 +133,7 @@
           ItemsSource="{Binding UrunlerView}"
           SelectedItem="{Binding SeciliUrun, Mode=TwoWay, Converter={StaticResource SelectedItemSafeConverter}}"
           AutoGenerateColumns="False"
-          CanUserAddRows="True"
+          CanUserAddRows="False"
           IsReadOnly="False"
           RowEditEnding="DataGrid_RowEditEnding"
           CellEditEnding="DataGrid_CellEditEnding"

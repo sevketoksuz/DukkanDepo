@@ -44,9 +44,17 @@ public sealed class KislikWindowViewModel : MainViewModel<KislikUrun>
         if (product is null)
             return;
 
+        if (!CanPersistProduct(product))
+        {
+            EnsureDraftRow();
+            return;
+        }
+
         product.Recalculate();
 
-        if (product.Id == 0)
+        var wasNew = product.Id == 0;
+
+        if (wasNew)
         {
             _repository
                 .AddAsync(product)
@@ -65,5 +73,8 @@ public sealed class KislikWindowViewModel : MainViewModel<KislikUrun>
             .SaveChangesAsync()
             .GetAwaiter()
             .GetResult();
+
+        if (wasNew)
+            EnsureDraftRow();
     }
 }

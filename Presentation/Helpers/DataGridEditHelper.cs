@@ -51,7 +51,12 @@ public static class DataGridEditHelper
 
     public static bool IsPlaceholder(object? value)
     {
-        return value is not null && value.GetType().Name == "NamedObject";
+        if (value is null)
+            return true;
+
+        var typeName = value.GetType().Name;
+
+        return typeName is "NamedObject" or "NewItemPlaceholder";
     }
 
     public static TextBox? TryGetFocusedTextBox()

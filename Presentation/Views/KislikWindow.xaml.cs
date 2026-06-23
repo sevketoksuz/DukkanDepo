@@ -169,6 +169,7 @@ public partial class KislikWindow : Window
             .UrunlerView
             .Cast<object>()
             .OfType<KislikUrun>()
+            .Where(product => product.Id > 0)
             .ToList();
 
         UrunExcelExportService.Export(
